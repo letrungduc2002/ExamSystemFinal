@@ -1,0 +1,30 @@
+        /* ===== RESET & TOÀN CỤC ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #F8F9FA;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* ===== NỘI DUNG CHÍNH - XEM nội dung ===== */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 3px;
+        }
+
+        .main-content {
+            padding: 10px;
+        }

@@ -1,0 +1,152 @@
+       /* FOOTER */
+        .footer {
+            background-color: #0D274D;
+            color: #E0E0E0;
+            padding: 20px 10px 15px;
+            /* Giảm padding trên/dưới */
+            margin-top: auto;
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 49px;
+            max-width: 1236px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-col h3 {
+            color: white;
+            font-size: 1rem;
+            /* Giảm từ 1.2rem */
+            margin-bottom: 6px;
+            /* Thêm khoảng cách nhỏ */
+            font-weight: 600;
+        }
+
+        .footer-col p,
+        .footer-col a {
+            color: #E0E0E0;
+            font-size: 0.85rem;
+            /* Giảm từ 0.95rem */
+            line-height: 1.4;
+            /* Giảm từ 1.6 */
+            text-decoration: none;
+        }
+
+        .footer-col a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .footer-logo {
+            font-size: 1.4rem;
+            /* Giảm từ 1.8rem */
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+            /* Giảm từ 15px */
+        }
+
+        .footer-logo i {
+            color: #FFB74D;
+            margin-right: 6px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .footer-col li {
+            margin-bottom: 2px;
+            /* Thêm khoảng cách nhỏ giữa các mục */
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 10px;
+            /* Giảm khoảng cách icon */
+            margin-top: 10px;
+            /* Giảm từ 15px */
+        }
+
+        .social-icons a {
+            display: inline-block;
+            width: 30px;
+            /* Giảm từ 38px */
+            height: 30px;
+            /* Giảm từ 38px */
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            /* Căn giữa theo chiều cao mới */
+            color: white;
+            font-size: 1rem;
+            /* Giảm từ 1.2rem */
+            transition: background 0.2s;
+        }
+
+        .social-icons a:hover {
+            background-color: #1A73E8;
+            text-decoration: none;
+        }
+
+        .footer-quote {
+            text-align: center;
+            font-style: italic;
+            color: #FFB74D;
+            margin: 13px 0 8px;
+            /* Giảm lề trên/dưới */
+            font-size: 0.95rem;
+            /* Giảm từ 1.1rem */
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 12px;
+            /* Giảm từ 20px */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            /* Giảm từ 0.9rem */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .back-to-top {
+            background: none;
+            border: 1px solid #E0E0E0;
+            color: #E0E0E0;
+            padding: 5px 12px;
+            /* Giảm từ 8px 16px */
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+
+        .back-to-top:hover {
+            background-color: #1A73E8;
+            border-color: #1A73E8;
+            color: white;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+        }

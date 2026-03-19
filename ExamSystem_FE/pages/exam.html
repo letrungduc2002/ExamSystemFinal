@@ -1,0 +1,101 @@
+<div class="main-content">
+    <!-- Thanh công cụ -->
+    <div class="exam-toolbar">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input id="searchInput" type="text" placeholder="Tìm kiếm đề thi...">
+        </div>
+        <div class="filter-area">
+            <div class="filter-popup" id="filterPopup">
+                <button class="filter-btn" id="filterBtn">
+                    <i class="fas fa-filter"></i> Lọc
+                </button>
+                <div class="filter-menu" id="filterMenu">
+                    <div class="filter-group">
+                        <h4>Loại kỳ thi</h4>
+                        <div class="filter-option">
+                            <input type="checkbox" id="v_act">
+                            <label for="v_act">V_ACT</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="hsa">
+                            <label for="hsa">HSA</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="tsa">
+                            <label for="tsa">TSA</label>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <h4>Độ khó</h4>
+                        <div class="filter-option">
+                            <input type="checkbox" id="easy">
+                            <label for="easy">Dễ</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="medium">
+                            <label for="medium">Trung bình</label>
+                        </div>
+                        <div class="filter-option">
+                            <input type="checkbox" id="hard">
+                            <label for="hard">Khó</label>
+                        </div>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn-reset" id="resetFilter">Đặt lại</button>
+                        <button class="btn-apply" id="applyFilter">Áp dụng</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view-toggle">
+                <button class="view-btn active" id="gridView">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="view-btn" id="listView">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="exam-list" id="examContainer">
+        <!-- Danh sách đề thi -->
+
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display:none;">
+        <i class="fas fa-search"></i>
+        <p>Không tìm thấy đề thi phù hợp</p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination"></div>
+
+</div>
+
+
+<div id="examSummaryPopup" class="popup-overlay">
+    <div class="popup-card">
+        <div class="popup-header">
+            <h2 id="examSummaryTitle"></h2>
+            <button id="closePopup" class="popup-close">✕</button>
+        </div>
+        <div id="examParts" class="popup-body"></div>
+        <!-- Nghi thức -->
+        <div class="popup-rule">
+            <label>
+                <input type="checkbox" id="confirmExamRule">
+                Tôi đã đọc cấu trúc đề và sẵn sàng tính giờ.
+            </label>
+        </div>
+        <div class="popup-footer">
+            <button id="startExamBtn" class="btn-start-exam">
+                Bắt đầu làm bài
+            </button>
+        </div>
+    </div>
+</div>

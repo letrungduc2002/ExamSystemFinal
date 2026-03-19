@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Làm bài thi</title>
+</head>
+<link rel="stylesheet" href="/assets/css/pages/quiz.css">
+
+<body>
+    <div class="quiz-layout">
+        <aside class="quiz-sidebar">
+            <h3>Câu hỏi</h3>
+            <div id="questionNavigator" class="question-grid"></div>
+        </aside>
+        <main class="quiz-main">
+            <div class="quiz-header">
+                <div id="timer"></div>
+                <div id="questionProgress"></div>
+            </div>
+            <div id="questionContainer"></div>
+
+            <div class="quiz-actions">
+                <button id="prevBtn">Câu trước</button>
+                <button id="flagBtn">Đánh dấu xem lại</button>
+                <button id="nextBtn">Câu tiếp theo</button>
+                <button id="submitBtn" class="submit-btn">Nộp bài</button>
+            </div>
+        </main>
+    </div>
+
+    <div id="breakPopup" class="break-overlay hidden">
+        <div class="break-card">
+            <h2 id="breakTitle"></h2>
+            <p>Thời gian nghỉ giải lao:</p>
+            <div id="breakTimer" class="break-timer">05:00</div>
+            <button id="skipBreakBtn">
+                Bỏ qua nghỉ & tiếp tục làm bài
+            </button>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/modules/quiz.js"></script>
+</body>
+</html>

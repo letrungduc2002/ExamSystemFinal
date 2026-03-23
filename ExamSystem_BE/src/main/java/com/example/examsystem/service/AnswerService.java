@@ -24,6 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
+/*
+ * Name: Le Trung Duc - Nhom 4
+ * Date: 18-03-2026
+ * Function: Lưu câu trả lời
+ */
 @Service
 @RequiredArgsConstructor
 public class AnswerService {
@@ -50,88 +56,5 @@ public class AnswerService {
                 strategy.saveAnswer(attempt, request.getQuestionId(), request.getOptionId());
             }
         }
-    }
-
-
-    @Transactional
-    public SubmitPartResponse submitPart(Long attemptId, SubmitPartRequest request) {
-        ExamAttempt attempt = attemptRepository.findById(attemptId)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lượt thi!"));
-        if (attempt.getStatus() != AttemptStatus.IN_PROGRESS) {
-            throw new IllegalStateException("Bài thi đã kết thúc, không thể nộp phần thi!");
-        }
-
-        ExamExecutionStrategy strategy = strategyFactory.getStrategy(attempt.getExam().getExamType());
-        ExamAttempt updatedAttempt = strategy.submitPart(attempt, request.getCurrentPartId());
-        attemptRepository.save(updatedAttempt);
-        Long nextPartId = (updatedAttempt.getCurrentPart() != null) ? updatedAttempt.getCurrentPart().getId() : null;
-        boolean isFinished = (nextPartId == null);
-        return SubmitPartResponse.builder()
-                .isFinished(isFinished)
-                .nextPartId(nextPartId)
-                .build();
-    }
-    
-    @Transactional
-    public ExamResultMappingResponse submitExam(Long attemptId) {
-        ExamAttempt attempt = attemptRepository.findById(attemptId)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lượt thi!"));
-
-        if (attempt.getStatus() == AttemptStatus.COMPLETED) {
-            throw new IllegalStateException("Bài thi này đã được nộp và chấm điểm!");
-        }
-        Long examId = attempt.getExam().getId();
-        List<Question> allQuestions = questionRepository.findAllByExamId(examId);
-
-        // 3. Lấy toàn bộ bài làm của học sinh
-        List<StudentResponse> studentResponses = studentResponseRepository.findByAttemptId(attemptId);
-
-        // Chuyển List thành Map<QuestionId, SelectedOptionId>
-        Map<Long, Long> userAnswersMap = studentResponses.stream()
-                .collect(Collectors.toMap(
-                        res -> res.getQuestion().getId(),
-                        res -> res.getSelectedOption().getId()
-                ));
-
-        int correctCount = 0;
-        List<QuestionResultMapping> details = new ArrayList<>();
-
-        // 4. THUẬT TOÁN CHẤM ĐIỂM
-        for (Question question : allQuestions) {
-            Long correctOptionId = question.getOptions().stream()
-                    .filter(Option::getIsCorrect)
-                    .map(Option::getId)
-                    .findFirst()
-                    .orElse(null);
-
-            Long selectedOptionId = userAnswersMap.get(question.getId());
-
-            boolean isCorrect = (selectedOptionId != null && selectedOptionId.equals(correctOptionId));
-            if (isCorrect) {
-                correctCount++;
-            }
-
-            details.add(QuestionResultMapping.builder()
-                    .questionId(question.getId())
-                    .content(question.getContent())
-                    .options(questionMapper.toQuestionResponseMapping(question.getOptions()))
-                    .selectedOptionId(selectedOptionId)
-                    .correctOptionId(correctOptionId)
-                    .isCorrect(isCorrect)
-                    .build());
-        }
-        attempt.setStatus(AttemptStatus.COMPLETED);
-        attempt.setSubmitTime(LocalDateTime.now());
-        double score = (double) correctCount / allQuestions.size() * 10.0;
-        score = Math.round(score * 100.0) / 100.0;
-        attempt.setTotalScore(score);
-        attemptRepository.save(attempt);
-        return ExamResultMappingResponse.builder()
-                .score(score)
-                .correctAnswers(correctCount)
-                .totalQuestions(allQuestions.size())
-                .submitTime(attempt.getSubmitTime())
-                .details(details)
-                .build();
     }
 }

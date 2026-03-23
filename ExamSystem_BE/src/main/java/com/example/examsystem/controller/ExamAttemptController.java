@@ -4,6 +4,7 @@ import com.example.examsystem.dto.request.SubmitPartRequest;
 import com.example.examsystem.dto.response.*;
 import com.example.examsystem.service.AnswerService;
 import com.example.examsystem.service.ExamAttemptService;
+import com.example.examsystem.service.ScoringService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +25,13 @@ public class ExamAttemptController {
 
     private final ExamAttemptService attemptService;
     private final AnswerService answerService;
+    private final ScoringService scoringService;
     /**
      * API: Khởi tạo lượt làm bài cho một Đề thi
      * POST /api/v1/exams/{examId}/attempts
      */
     @PostMapping("/{examId}/attempts")
     public ApiResponse<ExamAttemptResponse> startExam(@PathVariable("examId") Long examId) {
-
         Long currentStudentId = 1L;
         ApiResponse<ExamAttemptResponse> apiResponse = ApiResponse.<ExamAttemptResponse>builder()
                 .code(200)
@@ -85,7 +86,7 @@ public class ExamAttemptController {
         ApiResponse<SubmitPartResponse> response = ApiResponse.<SubmitPartResponse>builder()
                 .code(200)
                 .message("Đã nộp toàn bộ bài thi thành công! Chuyển phần thi thành công!")
-                .data(answerService.submitPart(attemptId, request))
+                .data(attemptService.submitPart(attemptId, request))
                 .build();
         return response;
     }
@@ -101,7 +102,7 @@ public class ExamAttemptController {
         ApiResponse<ExamResultMappingResponse> response = ApiResponse.<ExamResultMappingResponse>builder()
                 .code(200)
                 .message("Nộp bài và chấm điểm thành công!")
-                .data(answerService.submitExam(attemptId))
+                .data(scoringService.getCaculateScore(attemptId))
                 .build();
         return response;
     }

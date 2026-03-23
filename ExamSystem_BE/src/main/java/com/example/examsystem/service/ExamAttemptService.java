@@ -19,13 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-
-
 /*
  * Name: Le Trung Duc - Nhom 4
  * Date: 18-03-2026
- * Function: Thuc Hien Chuc Nang Xu Ly Qua Trinh Khoi Tao, Luu Bai Thi, Va Tinh Toan Ket Qua
+ * Function: Khởi tạo bài thi
  */
 
 
@@ -91,6 +88,25 @@ public class ExamAttemptService {
                 .startTime(attempt.getStartTime())
                 .durationInMinutes(duration)
                 .questions(questionMapper.toQuestionResponseList(rawQuestions))
+                .build();
+    }
+
+    @Transactional
+    public SubmitPartResponse submitPart(Long attemptId, SubmitPartRequest request) {
+        ExamAttempt attempt = attemptRepository.findById(attemptId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lượt thi!"));
+        if (attempt.getStatus() != AttemptStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Bài thi đã kết thúc, không thể nộp phần thi!");
+        }
+
+        ExamExecutionStrategy strategy = strategyFactory.getStrategy(attempt.getExam().getExamType());
+        ExamAttempt updatedAttempt = strategy.submitPart(attempt, request.getCurrentPartId());
+        attemptRepository.save(updatedAttempt);
+        Long nextPartId = (updatedAttempt.getCurrentPart() != null) ? updatedAttempt.getCurrentPart().getId() : null;
+        boolean isFinished = (nextPartId == null);
+        return SubmitPartResponse.builder()
+                .isFinished(isFinished)
+                .nextPartId(nextPartId)
                 .build();
     }
 

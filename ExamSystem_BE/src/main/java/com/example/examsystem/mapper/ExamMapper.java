@@ -21,5 +21,4 @@ public interface ExamMapper {
     @Mapping(source = "questionCount", target = "totalQuestion")
     ExamResponse toResponse(ExamProjection projection);
 
-
 }

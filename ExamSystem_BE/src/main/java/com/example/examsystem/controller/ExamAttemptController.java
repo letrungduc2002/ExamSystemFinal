@@ -1,23 +1,20 @@
 package com.example.examsystem.controller;
-
 import com.example.examsystem.dto.request.AnswerRequest;
 import com.example.examsystem.dto.request.SubmitPartRequest;
 import com.example.examsystem.dto.response.*;
+import com.example.examsystem.service.AnswerService;
 import com.example.examsystem.service.ExamAttemptService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 
 /*
  * Name: Le Trung Duc - Nhom 4
  * Date: 18-03-2026
  * Function: Gui Api thuc hien qua trinh Khoi Tao, Luu Bai Thi, Va Tinh Toan Ket Qua
  */
-
 
 @RestController
 @RequestMapping("/api/v1/exams")
@@ -26,7 +23,7 @@ import java.util.List;
 public class ExamAttemptController {
 
     private final ExamAttemptService attemptService;
-
+    private final AnswerService answerService;
     /**
      * API: Khởi tạo lượt làm bài cho một Đề thi
      * POST /api/v1/exams/{examId}/attempts
@@ -67,7 +64,7 @@ public class ExamAttemptController {
             @PathVariable("attemptId") Long attemptId,
             @RequestBody List<AnswerRequest> requests) { // Đổi thành List
 
-        attemptService.saveStudentAnswersBatch(attemptId, requests);
+        answerService.saveStudentAnswersBatch(attemptId, requests);
         ApiResponse<String> response = ApiResponse.<String>builder()
                 .code(200)
                 .message("Đã đồng bộ thành công " + requests.size() + " đáp án")
@@ -88,7 +85,7 @@ public class ExamAttemptController {
         ApiResponse<SubmitPartResponse> response = ApiResponse.<SubmitPartResponse>builder()
                 .code(200)
                 .message("Đã nộp toàn bộ bài thi thành công! Chuyển phần thi thành công!")
-                .data(attemptService.submitPart(attemptId, request))
+                .data(answerService.submitPart(attemptId, request))
                 .build();
         return response;
     }
@@ -104,9 +101,8 @@ public class ExamAttemptController {
         ApiResponse<ExamResultMappingResponse> response = ApiResponse.<ExamResultMappingResponse>builder()
                 .code(200)
                 .message("Nộp bài và chấm điểm thành công!")
-                .data(attemptService.submitExam(attemptId))
+                .data(answerService.submitExam(attemptId))
                 .build();
-
         return response;
     }
 }

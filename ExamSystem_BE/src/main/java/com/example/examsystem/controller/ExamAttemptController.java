@@ -2,12 +2,8 @@ package com.example.examsystem.controller;
 import com.example.examsystem.dto.request.AnswerRequest;
 import com.example.examsystem.dto.request.SubmitPartRequest;
 import com.example.examsystem.dto.response.*;
-import com.example.examsystem.service.AnswerService;
 import com.example.examsystem.service.ExamAttemptService;
-import com.example.examsystem.service.ScoringService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -16,7 +12,6 @@ import java.util.List;
  * Date: 18-03-2026
  * Function: Gui Api thuc hien qua trinh Khoi Tao, Luu Bai Thi, Va Tinh Toan Ket Qua
  */
-
 @RestController
 @RequestMapping("/api/v1/exams")
 @RequiredArgsConstructor
@@ -24,8 +19,6 @@ import java.util.List;
 public class ExamAttemptController {
 
     private final ExamAttemptService attemptService;
-    private final AnswerService answerService;
-    private final ScoringService scoringService;
     /**
      * API: Khởi tạo lượt làm bài cho một Đề thi
      * POST /api/v1/exams/{examId}/attempts
@@ -36,7 +29,7 @@ public class ExamAttemptController {
         ApiResponse<ExamAttemptResponse> apiResponse = ApiResponse.<ExamAttemptResponse>builder()
                 .code(200)
                 .message("Success")
-                .data(attemptService.startExam(examId, currentStudentId))
+                .data(attemptService.createAttempt(examId, currentStudentId))
                 .build();
         return apiResponse;
     }
@@ -61,11 +54,11 @@ public class ExamAttemptController {
      * POST /api/v1/exams/attempts/{attemptId}/answers
      */
     @PostMapping("/attempts/{attemptId}/answers")
-    public ApiResponse<String> saveAnswersBatch(
+    public ApiResponse<String> autoSave(
             @PathVariable("attemptId") Long attemptId,
             @RequestBody List<AnswerRequest> requests) { // Đổi thành List
 
-        answerService.saveStudentAnswersBatch(attemptId, requests);
+        attemptService.autoSaveAnswer(attemptId, requests);
         ApiResponse<String> response = ApiResponse.<String>builder()
                 .code(200)
                 .message("Đã đồng bộ thành công " + requests.size() + " đáp án")
@@ -102,7 +95,7 @@ public class ExamAttemptController {
         ApiResponse<ExamResultMappingResponse> response = ApiResponse.<ExamResultMappingResponse>builder()
                 .code(200)
                 .message("Nộp bài và chấm điểm thành công!")
-                .data(scoringService.getCaculateScore(attemptId))
+                .data(attemptService.submitAndGetScore(attemptId))
                 .build();
         return response;
     }

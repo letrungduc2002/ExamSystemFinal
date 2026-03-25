@@ -12,13 +12,10 @@ import com.example.examsystem.pattern.strategy.ExamExecutionStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-
 /*
  * Name: Le Trung Duc - Nhom 4
  * Date: 18-03-2026
@@ -26,8 +23,6 @@ import java.util.Optional;
  *           tính giờ riêng biệt cho từng phần (HSA, TSA)
  *
  */
-
-
 @Component
 @RequiredArgsConstructor
 public class PartBasedTimingStrategy implements ExamExecutionStrategy {

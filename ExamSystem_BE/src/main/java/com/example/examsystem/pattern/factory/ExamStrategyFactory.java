@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
-
 /*
  * Name: Le Trung Duc - Nhom 4
  * Date: 18-03-2026
@@ -17,9 +15,6 @@ import java.util.Map;
  *            Đây là bộ định tuyến (Router) trung tâm giúp điều phối request đến đúng Strategy.
 
  */
-
-
-
 @Component
 public class ExamStrategyFactory {
 

@@ -40,7 +40,7 @@ public class ExamAttemptService {
 
 
     @Transactional
-    public ExamAttemptResponse startExam(Long examId, Long studentId) {
+    public ExamAttemptResponse createAttempt(Long examId, Long studentId) {
         Optional<ExamAttempt> existingAttempt = attemptRepository
                 .findFirstByUserIdAndExamIdAndStatus(studentId, examId, AttemptStatus.IN_PROGRESS);
         if (existingAttempt.isPresent()) {
@@ -108,6 +108,79 @@ public class ExamAttemptService {
                 .isFinished(isFinished)
                 .nextPartId(nextPartId)
                 .build();
+    }
+
+    @Transactional
+    public ExamResultMappingResponse submitAndGetScore(Long attemptId) {
+        ExamAttempt attempt = attemptRepository.findById(attemptId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lượt thi!"));
+
+        if (attempt.getStatus() == AttemptStatus.COMPLETED) {
+            throw new IllegalStateException("Bài thi này đã được nộp và chấm điểm!");
+        }
+        attempt.setStatus(AttemptStatus.COMPLETED);
+        attempt.setSubmitTime(LocalDateTime.now());
+
+        Long examId = attempt.getExam().getId();
+        List<Question> allQuestions = questionRepository.findAllByExamId(examId);
+
+        List<StudentResponse> studentResponses = studentResponseRepository.findByAttemptId(attemptId);
+        Map<Long, Long> userAnswersMap = studentResponses.stream()
+                .collect(Collectors.toMap(
+                        res -> res.getQuestion().getId(),
+                        res -> res.getSelectedOption().getId()
+                ));
+        int correctCount = 0;
+        List<QuestionResultMapping> details = new ArrayList<>();
+        // 4. THUẬT TOÁN CHẤM ĐIỂM
+        for (Question question : allQuestions) {
+            Long correctOptionId = question.getOptions().stream()
+                    .filter(Option::getIsCorrect)
+                    .map(Option::getId)
+                    .findFirst()
+                    .orElse(null);
+            Long selectedOptionId = userAnswersMap.get(question.getId());
+            boolean isCorrect = (selectedOptionId != null && selectedOptionId.equals(correctOptionId));
+            if (isCorrect) {
+                correctCount++;
+            }
+            details.add(QuestionResultMapping.builder()
+                    .questionId(question.getId())
+                    .content(question.getContent())
+                    .options(questionMapper.toQuestionResponseMapping(question.getOptions()))
+                    .selectedOptionId(selectedOptionId)
+                    .correctOptionId(correctOptionId)
+                    .isCorrect(isCorrect)
+                    .build());
+        }
+        double score = (double) correctCount / allQuestions.size() * 10.0;
+        score = Math.round(score * 100.0) / 100.0;
+        attempt.setTotalScore(score);
+        attemptRepository.save(attempt);
+        return ExamResultMappingResponse.builder()
+                .score(score)
+                .correctAnswers(correctCount)
+                .totalQuestions(allQuestions.size())
+                .submitTime(attempt.getSubmitTime())
+                .details(details)
+                .build();
+    }
+
+    @Transactional
+    public void autoSaveAnswer(Long attemptId, List<AnswerRequest> answerRequests) {
+        ExamAttempt attempt = attemptRepository.findById(attemptId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy lượt thi!"));
+        if (attempt.getStatus() != AttemptStatus.IN_PROGRESS) {
+            throw new IllegalStateException("Bài thi đã kết thúc, không thể lưu thêm đáp án!");
+        }
+        // 3. Lấy Strategy tương ứng
+        ExamExecutionStrategy strategy = strategyFactory.getStrategy(attempt.getExam().getExamType());
+        // 4. lưu từng đáp án
+        for (AnswerRequest request : answerRequests) {
+            if (request.getQuestionId() != null && request.getOptionId() != null) {
+                strategy.saveAnswer(attempt, request.getQuestionId(), request.getOptionId());
+            }
+        }
     }
 
 }
